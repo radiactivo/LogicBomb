@@ -2,6 +2,7 @@
 import os, fnmatch, hashlib, base64, re, hashlib
 from Crypto.Cipher import DES
 from pyPdf import PdfFileReader
+from time import gmtime, strftime
 
 #############################################################################
 # NAME: encrypt()                                                           #
@@ -64,8 +65,10 @@ if checkCondition() == False:
     exit()
 
 key = key()
-list_of_files = find('*.*', 'C:\\Users\\radiactivo\\Desktop\\CryptoTest\\')
+list_of_files = find('*.*', 'C:\\Users\\radiactivo\\Desktop\\')
 
+print "Starting encryption: ", strftime("%Y-%m-%d %H:%M:%S", gmtime())
+a = 0;
 for filename in list_of_files:
     hash_orig_file = md5(filename)
     with open(filename, 'rb+') as fd:
@@ -82,3 +85,7 @@ for filename in list_of_files:
     hash_recovered_file = md5(filename)
     if hash_recovered_file == hash_orig_file:
         print "MATCH:", hash_orig_file," = ", hash_recovered_file
+        a = a + 1
+print "Ending encryption: ", strftime("%Y-%m-%d %H:%M:%S", gmtime())
+print "Number of files read = ", len(list_of_files)
+print "Number of files matched = ", a

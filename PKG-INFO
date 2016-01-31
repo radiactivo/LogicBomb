@@ -1,0 +1,18 @@
+Metadata-Version: 1.0
+Name: syscon
+Version: 0.8
+Summary: System remote control via local network
+Home-page: UNKNOWN
+Author: syscon
+Author-email: py.syscon@googlemail.com
+License: THIS TOOL IS PUBLISHED UNDER THE GNU GENERAL PUBLIC LICENSE VERSION 2.0
+
+LICENSE TEXT: http://www.gnu.org/licenses/gpl-2.0.html
+Description: ======
+        syscon
+        ======
+        
+        syscon 0.8 is a python package providing remote control tools for other computers
+        in the network. Please read the `docs <http://packages.python.org/syscon>`_
+        
+Platform: UNKNOWN
